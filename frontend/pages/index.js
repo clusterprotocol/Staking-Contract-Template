@@ -30,7 +30,7 @@ const Login = () => {
           Token Staking DApp
         </h1>
         <p className="text-lg md:text-xl text-gray-700 mb-10">
-          Stake your ERC-20 tokens and earn passive rewards. Transparent,
+          Stake your WETH and earn passive rewards in ZCoin. Transparent,
           decentralized, and secure.
         </p>
         <button

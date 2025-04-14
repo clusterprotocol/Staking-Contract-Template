@@ -7,8 +7,9 @@ import {
   stakeTokens,
   initiateUnstake,
   withdraw,
+  getFormattedRewardBalance,
 } from '@/utils/helpers';
-import { formatUnits, parseEther, parseUnits } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers';
 
 export default function DashboardPage() {
   const [amountToStake, setAmountToStake] = useState('');
@@ -16,22 +17,19 @@ export default function DashboardPage() {
   const [reward, setReward] = useState('0');
   const [loading, setLoading] = useState(false);
   const [txStatus, setTxStatus] = useState('');
+  const [rewardBalance, setRewardBalance] = useState('');
 
   const fetchStakeData = async () => {
     try {
       const info = await getStakeInfo();
       const pending = await calculateReward();
-      console.log(info)
+      console.log(info);
       setStakeInfo(info);
       setReward(pending.toString());
     } catch (err) {
       console.error('Error fetching stake info:', err);
     }
   };
-
-  useEffect(() => {
-    fetchStakeData();
-  }, []);
 
   const handleStake = async () => {
     setLoading(true);
@@ -43,8 +41,8 @@ export default function DashboardPage() {
       await fetchStakeData();
       setTxStatus('✅ Successfully staked!');
     } catch (err) {
-      console.error(err);
-      setTxStatus('❌ Error staking.');
+      console.error(err.reason);
+      setTxStatus(`❌ ${err.reason}`);
     } finally {
       setLoading(false);
     }
@@ -58,8 +56,8 @@ export default function DashboardPage() {
       await fetchStakeData();
       setTxStatus('✅ Cooldown started!');
     } catch (err) {
-      console.error(err);
-      setTxStatus('❌ Error initiating unstake.');
+      console.error(err.reason);
+      setTxStatus(`❌ ${err.reason}`);
     } finally {
       setLoading(false);
     }
@@ -74,12 +72,27 @@ export default function DashboardPage() {
       setTxStatus('✅ Withdrawn successfully!');
     } catch (err) {
       console.error(err);
-      console.log(err.reason)
-      setTxStatus('❌ Error withdrawing.');
+      console.log(err.reason);
+      setTxStatus(`❌ ${err.reason}`);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchStakeData();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const balance = await getFormattedRewardBalance();
+        setRewardBalance(balance);
+      } catch (err) {
+        console.error('Error fetching reward token balance:', err);
+      }
+    })();
+  }, []);
 
   return (
     <div className="min-h-screen bg-yellow-50 flex flex-col items-center py-10 px-4">
@@ -105,7 +118,7 @@ export default function DashboardPage() {
             disabled={loading}
             className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded-lg transition-all duration-200"
           >
-            {loading ? 'Staking...' : 'Stake Tokens'}
+            {loading ? 'Staking...' : 'Stake WETH'}
           </button>
         </div>
 
@@ -124,7 +137,8 @@ export default function DashboardPage() {
               : 'N/A'}
           </p>
           <p>
-            <strong>Pending Reward:</strong> {reward ? formatUnits(reward, 18) : '0'}
+            <strong>Pending Reward:</strong>{' '}
+            {reward ? formatUnits(reward, 18) : '0'}
           </p>
           <p>
             <strong>Cooldown Started:</strong>{' '}
@@ -133,6 +147,19 @@ export default function DashboardPage() {
                   parseInt(stakeInfo.cooldownStart) * 1000
                 ).toLocaleString()
               : 'Not started'}
+          </p>
+          <p>
+            <strong>ZCoin Balance:</strong>{' '}
+            {rewardBalance ? rewardBalance : '0'}
+          </p>
+          <br />
+          <p>
+            <strong>ZCoin Contract Address:</strong>{' '}
+            0x7711a7CcAF661310882D0462b1379349f316Af0a
+          </p>
+          <p>
+            (please add the above token address to your metamask to view your
+            rewards)
           </p>
         </div>
 

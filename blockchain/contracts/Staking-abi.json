@@ -3,18 +3,8 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_token",
+        "name": "_rewardToken",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_apy",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_cooldown",
-        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -78,7 +68,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_user",
+        "name": "user",
         "type": "address"
       }
     ],
@@ -131,6 +121,19 @@
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rewardToken",
+    "outputs": [
+      {
+        "internalType": "contract RewardToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

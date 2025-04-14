@@ -4,10 +4,10 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract StakingToken is ERC20Burnable, Ownable {
+contract RewardToken is ERC20Burnable, Ownable {
     mapping(address => bool) public minters;
 
-    constructor() ERC20("Staking Token", "STK") Ownable(msg.sender) {}
+    constructor() ERC20("ZCoin", "ZC") Ownable(msg.sender) {}
 
     modifier onlyMinter() {
         require(minters[msg.sender], "Not authorized to mint");
@@ -18,7 +18,7 @@ contract StakingToken is ERC20Burnable, Ownable {
         minters[minter] = enabled;
     }
 
-    function mint(address to, uint256 amount) external onlyMinter {
+    function mint(address to, uint256 amount) external {
         _mint(to, amount);
     }
 }

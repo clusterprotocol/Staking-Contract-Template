@@ -1,6 +1,12 @@
 import { ethers } from 'ethers';
 import { getContract } from './utils';
-import { getSigner } from './web3';
+import { getSigner, getProvider } from './web3';
+
+const REWARD_TOKEN_ADDRESS =  '0x7711a7CcAF661310882D0462b1379349f316Af0a'; // 🔁 Replace this
+const REWARD_TOKEN_ABI = [
+  'function balanceOf(address owner) view returns (uint256)',
+  'function decimals() view returns (uint8)',
+];
 
 export async function getStakeInfo() {
   const contract = await getContract();
@@ -81,4 +87,20 @@ export async function setCooldownPeriod(seconds) {
   const contract = await getContract();
   const tx = await contract.setCooldownPeriod(seconds);
   await tx.wait();
+}
+
+// 🔥 NEW — get raw reward token balance
+export async function getRewardTokenBalance() {
+  const provider = await getProvider();
+  const signer = await getSigner();
+  const address = await signer.getAddress();
+
+  const token = new ethers.Contract(REWARD_TOKEN_ADDRESS, REWARD_TOKEN_ABI, provider);
+  return await token.balanceOf(address);
+}
+
+// 🔥 NEW — get formatted reward balance
+export async function getFormattedRewardBalance() {
+  const raw = await getRewardTokenBalance();
+  return ethers.formatUnits(raw, 18);
 }
