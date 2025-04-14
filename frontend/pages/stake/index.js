@@ -69,6 +69,8 @@ export default function DashboardPage() {
     try {
       await withdraw();
       await fetchStakeData();
+      const balance = await getFormattedRewardBalance();
+      setRewardBalance(balance);
       setTxStatus('✅ Withdrawn successfully!');
     } catch (err) {
       console.error(err);
